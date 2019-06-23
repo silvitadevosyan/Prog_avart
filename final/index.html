@@ -1,0 +1,257 @@
+<html>
+
+<head>
+    <meta charset="utf8">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.js"></script>
+    <script src="script.js"></script>
+
+    <style>
+        body {
+            background-color: black;
+            /* background: linear-gradient(45deg,#12c2e9,#c471ed,#f7797d);
+	background-size: 200%;
+	background-attachment: fixed;
+	animation:anim 4s ease infinite; */
+        }
+
+        @keyframes anim {
+            0% {
+                background-position: 0 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0 50%;
+            }
+        }
+
+        #defaultCanvas0 {
+            margin-left: 20px;
+        }
+
+        .title {
+            /* color: #36544f; */
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            font-size: 450%;
+            user-select: none;
+            cursor: url(../image/key.png), auto;
+            animation: mymove 7s infinite;
+            padding-right: 15px;
+            margin-left: 20px;
+        }
+
+        @keyframes mymove {
+            0% {
+                color: #ff00bf;
+            }
+            25% {
+                color: #00ffff;
+            }
+            50% {
+                color: blue;
+            }
+            75% {
+                color: #8000ff;
+            }
+            100% {
+                color: #ff00ff;
+            }
+        }
+
+        .desc {
+            /* color: #36544f; */
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            font-size: 15px;
+            user-select: none;
+            cursor: url(../image/key.png), auto;
+            animation: mymove 7s infinite;
+        }
+
+        @keyframes mymove {
+            0% {
+                color: #ff00bf;
+            }
+            25% {
+                color: #00ffff;
+            }
+            50% {
+                color: blue;
+            }
+            75% {
+                color: #8000ff;
+            }
+            100% {
+                color: #ff00ff;
+            }
+        }
+
+        table,
+        td,
+        tr {
+            border: 1px solid;
+        }
+
+        #legend {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 800px;
+            margin-left: 60px;
+            margin-right: 60px;
+            margin-top: 150px;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 30px;
+        }
+
+        td {
+            font-size: 14px;
+            padding-left: 5px;
+        }
+
+        button {
+            background: linear-gradient(50deg, #ff00bf, #8000ff);
+            width: 350px;
+            height: 50px;
+            border: none;
+            color: #00ffff;
+            font-size: 30px;
+            border-radius: 50px;
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            margin-left: 20px;
+        }
+
+        div {
+            display: inline;
+        }
+
+        #weater {
+            font-size: 20px;
+            animation: mymove 7s infinite;
+        }
+
+        .xot {
+            background: linear-gradient(90deg, #aaffff 25%, #00ff1f 50%, #FFFF00 75%, #00ffff 100%);
+            width: 30px;
+            height: 30px;
+        }
+        .xotaker {
+            background: linear-gradient(90deg, #ff89e1 25%, #00a313 50%, #ff8800 75%, #ff00bf 100%);
+            width: 30px;
+            height: 30px;
+        }
+        .gishatich{
+            background: linear-gradient(90deg, #c58aff 25%, #00a264 50%, #ffcc00 75%, #8000ff 100%);
+            width: 30px;
+            height: 30px;
+        }
+        .gazan{
+            background: linear-gradient(90deg, #8d90ff 25%, #00a18c 50%, #ff5900 75%, #0008ff 100%);
+            width: 30px;
+            height: 30px;
+        }
+        .mard{
+            background: linear-gradient(90deg, #f9a4ff 25%, #63ff4f 50%, #ff0000 75%, #f008ff 100%);
+            width: 30px;
+            height: 30px;
+        }
+        .datark{
+            background: black;
+            border: 1px solid; animation: mymove 7s infinite;;
+            width: 30px;
+            height: 30px;
+        }
+    </style>
+</head>
+
+
+<body>
+    <h1 class="title">GAME OF LIFE</h1>
+    <button type="submit" onClick="refreshPage()">Refresh The Page</button>
+    <script>
+        function refreshPage() {
+            window.location.reload();
+        } 
+    </script>
+    <div>
+        <table id="legend">
+            <tr>
+                <td class="desc">Գույն</td>
+                <td class="desc">Անվանում</td>
+                <td class="desc">Շարժվում է</td>
+                <td class="desc">Ուտում է</td>
+                <td class="desc">Բազմանում է</td>
+                <td class="desc">Սատկում է</td>
+            </tr>
+
+            <tr>
+                <td class="datark"></td>
+                <td class="desc">Դատարկ վանդակներ</td>
+                <td class="legend-color"></td>
+                <td class="legend-color"></td>
+                <td class="legend-color"></td>
+                <td class="legend-color"></td>
+            </tr>
+            <tr class="tr1">
+                <td class="xot"></td>
+                <td class="desc">Խոտ</td>
+                <td class="legend-color"></td>
+                <td class="legend-color"></td>
+                <td class="desc">Մոտակա 8 վանդակներում, 2 տակտը մեկ</td>
+                <td class="legend-color"></td>
+            </tr>
+            <tr>
+                <td class="xotaker"></td>
+                <td class="desc">Խոտակեր</td>
+                <td class="desc">Մոտակա 8 վանդակներում, էներգիան քչանում է 1֊ով</td>
+                <td class="desc">Խոտերին, մոտակա 8 վանդակներում </td>
+                <td class="desc">Բազմանում է մոտակա տարածքներում, երբ էներգիան 10֊ից ավել է</td>
+                <td class="desc">Սատկում է, երբ էներգիան փոքր է 0֊ից</td>
+            </tr>
+            <tr>
+                <td class="gishatich"></td>
+                <td class="desc">Գիշատիչ</td>
+                <td class="desc">Մոտակա 8 վանդակներում, էներգիան քչանում է 1֊ով</td>
+                <td class="desc">Խոտակերներին, մոտակա 8 վանդակներում </td>
+                <td class="desc">Բազմանում է մոտակա տարածքներում, երբ էներգիան = 10</td>
+                <td class="desc">Սատկում է, երբ էներգիան փոքր է 0֊ից</td>
+            </tr>
+            <tr>
+                <td class="gazan"></td>
+                <td class="desc">Գազան</td>
+                <td class="desc">Մոտակա 24 վանդակներում, շարժվում է անկյունագծերով, էներգիան քչանում է 1֊ով</td>
+                <td class="desc">Գիշատիչներներին, մոտակա 24 վանդակներում </td>
+                <td class="desc">Բազմանում է մոտակա տարածքներում, երբ էներգիան = 10</td>
+                <td class="desc">Սատկում է, երբ էներգիան փոքր է 0֊ից</td>
+            </tr>
+            <tr>
+                <td class="mard"></td>
+                <td class="desc">Մարդ</td>
+                <td class="desc">Մոտակա 24 վանդակներում, էներգիան քչանում է 1֊ով</td>
+                <td class="desc">Խոտերին (բուսակեր) և գազաներին, մոտակա 24 վանդակներում</td>
+                <td class="desc">Բազմանում է մոտակա տարածքներում, երբ էներգիան = 10</td>
+                <td class="desc">Սատկում է, երբ էներգիան փոքր է 0֊ից</td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <p>
+            <button onclick="killAll()">Սպանել բոլորին</button>
+        </p>
+        <p> <button onclick="Bomb()">Ռումբ</button></p>
+        <p><button onclick="XotAvelacnel()">Ավելացնել խոտ</button><br> </p>
+        <p><button onclick="XotakerAvelacnel()">Ավելացնել խոտակեր</button> <br></p>
+        <p><button onclick="GishatichAvelacnel()">Ավելացնել գիշատիչ</button> <br></p>
+        <p> <button onclick="GazanAvelacnel()">Ավելացնել գազան</button> <br></p>
+        <p> <button onclick="MardAvelacnel()">Ավելացնել մարդ</button> <br></p>
+        <p> <button>Սիլվարդ Թադեւոսյան</button> <br></p>
+        <p> <button id="vayvay"></button> <br></p>
+
+    </div>
+</body>
+
+</html>
